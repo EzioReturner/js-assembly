@@ -15,16 +15,21 @@ export function debounce(fn, wait = 300) {
  * 
  * */
 export function scientificNotation(value) {
-  if (typeof value === 'undefined' || typeof value !== 'number' || value === null || isNaN(value)) {
-    throw Error('scientificNotation need a number type value')
+  if (typeof value === 'undefined' || value === null || isNaN(value)) {
+    return value;
   }
-  const _value = value.toString().split('');
+  const stringValue = value.toString();
+  const [integer, decimal] = stringValue.split('.');
+  if (integer.length <= 3) {
+    return stringValue;
+  }
   let total = '';
-  for (let i = _value.length - 1, j = 1; i > -1; i--, j++) {
-    const num = j % 3 === 0 ? `,${_value[i]}` : _value[i];
+  for (let i = integer.length - 1, j = 1; i > -1; i--, j++) {
+    const num = j % 3 === 0 ? `,${integer[i]}` : integer[i];
     total = num + total;
   }
-  return total.replace(/^,/, '');
+  total = total.replace(/^,/, '') + (decimal ? `.${decimal}` : '');
+  return total;
 }
 
 /**
