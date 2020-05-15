@@ -10,7 +10,7 @@ export function debounce(fn, wait = 300) {
 }
 
 /**
- * 科学计数法
+ * 千分位
  * @param value 需处理的数据
  * 
  * */

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>transfer big data</title>
+</head>
+<body style="text-align: center;">
+  <input type="text" id="line"> <span>input data line</span>
+  <br/>
+  <input type="checkbox" id="transferable"> <span>use transferable</span> <button id="start">start</button>
+  <h3>time token: </h3>
+  <p id="time"></p>
+  <script id="worker" type="app/worker">
+    function transferByLine(line, transferable) {
+      var arr = [];
+      var bufferArr = [];
+      for (var i = 0; i < line; i++) {
+        arr[i] = new Uint8Array(200 * 1024);
+        if (transferable) {
+          bufferArr.push(arr[i].buffer);
+        }
+      }
+      console.log(
+        'Successfully created the array. The array has ' + line + ' items, each item size is 200 kb'
+      );
+      console.log(`Start transferring... ${transferable?'using transferable':''}`);
+      var startTime = new Date().getTime();
+      if (!transferable) {
+        this.postMessage(arr);
+        bufferArr = null;
+      } else {
+        this.postMessage(arr, bufferArr);
+      }
+      var timeTaken = new Date().getTime() - startTime;
+      console.log('Tranfer completed in ' + timeTaken + 'ms.');
+      this.postMessage({time: timeTaken});
+    }
+    
+    this.addEventListener(
+      'message',
+      function(e) {
+        const {data:{line,transferable}} = e;
+        transferByLine(line, transferable)
+      },
+      false
+    );
+    
+  </script>
+  <script>
+    var blob = new Blob([document.querySelector('#worker').textContent]);
+    var url = window.URL.createObjectURL(blob);
+    var worker = new Worker(url);
+    var startBtn = document.getElementById('start');
+    var line = document.getElementById('line');
+    var transferable = document.getElementById('transferable');
+    var time = document.getElementById('time');
+
+    startBtn.addEventListener('click', () => {
+      if(!line.value) {
+        alert('please input data line')
+        return;
+      }
+      worker.postMessage({
+        line: line.value,
+        transferable: transferable.checked
+      })
+    })
+    worker.addEventListener('message', (e) => {
+      time.innerHTML = e.data.time + 'ms';
+    })
+  </script>
+</body>
+</html>
