@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>密集点位切片渲染</title>
+  <script src="https://webapi.amap.com/maps?v=1.4.15&key=7a1fab385c9097badd4e6e7117cb8536&plugin=AMap.Walking,AMap.Riding"></script>
+  <script type="text/javascript" src="./data1.js"></script>
+  <script type="text/javascript" src="./data2.js"></script>
+  <script type="text/javascript" src="./data3.js"></script>
+  <script type="text/javascript" src="./data4.js"></script>
+  <script type="text/javascript" src="./data5.js"></script>
+</head>
+<body>
+  <div id="map" style="width: 100wd;height: 100vh"></div>
+  <button id="button" style="padding: 8px 16px;background-color: blueviolet;color: white;position: absolute;top: 50px;left: 100px;">add marker</button>
+  <script>
+    var _map = new AMap.Map('map', {
+      resizeEnable: true,
+      doubleClickZoom: false,
+      zoom: 11
+    });
+    var _markers = [];
+    [data1, data2, data3, data4, data5].forEach(d => {
+      _markers.push(...d.points.map(p => 
+        new window.AMap.Marker({
+          position: [p.point.lng, p.point.lat]
+        })
+      ));
+    });
+    let split = [];
+    let tasks = [];
+    for (let index = 0; index < _markers.length; index++) {
+      split.push(_markers[index]);
+      if (split.length === 40) {
+        tasks.push(split);
+        split = [];
+      }
+    }
+    function myNonEssentialWork(deadline) {
+      // 如果帧内有富余的时间，或者超时
+      while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && tasks.length > 0) {
+        work();
+      }
+      if (tasks.length > 0) requestIdleCallback(myNonEssentialWork);
+    }
+    function work() {
+      let task = tasks.shift();
+      _map.add(task);
+      task = null;
+    }
+    document.getElementById('button').addEventListener('click', () => {
+      window.requestIdleCallback(myNonEssentialWork, { timeout: 2000 });
+    })
+  </script>
+</body>
+</html>
