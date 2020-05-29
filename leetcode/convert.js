@@ -1,4 +1,4 @@
-
+// convert list to tree
 const list = [
   {
     "id": 19,
@@ -18,6 +18,13 @@ const list = [
   }
 ];
 
+/**
+ * @param list {object[]}, 
+ * @param parentKey {string}
+ * @param currentKey {string}
+ * @param rootValue {any}
+ * @return object
+ */
 function convert(list, parentKey, currentKey, rootValue) {
   let tree = {
     id: rootValue,
@@ -45,6 +52,5 @@ function convert(list, parentKey, currentKey, rootValue) {
   return tree;
 }
 
-const result = convert(list, 'parentId', 'id', 0);
-console.log(result);
+console.log(convert(list, 'parentId', 'id', 0));
     
