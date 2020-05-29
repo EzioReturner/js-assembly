@@ -38,3 +38,19 @@ console.log(find(a, 7));
 // 思路是这样的，首先判断 1行1列的值如果比目标值大，直接退出，
 // 遍历判断每一行的第一列，如果大于目标值，说明目标值不在该列更不在后续列直接退出，
 // 如果目标值小于最后一列的值说明可能位于该列，做一次includes 以此类推。
+
+function Find(target, array) {
+  // write code here
+  lenX = array.length;
+  lenY = array[0].length;
+  for (var i = lenX - 1, j = 0; i >= 0 && j < lenY;) {
+    if (target > array[i][j]) {
+      j++;
+    } else if (target < array[i][j]) {
+      i--;
+    } else {
+      return true;
+    }
+  }
+  return false
+}
