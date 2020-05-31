@@ -2,7 +2,7 @@ function jumpFloor(number) {
   if(number<2) return 1;
   let [cur, pre] = [1,1];
   for(let i = 2; i<= number; i++) {
-      [cur, pre] = [cur+pre, cur];
+    [cur, pre] = [cur + pre, cur];
   }
   return cur;
 }
