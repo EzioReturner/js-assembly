@@ -69,3 +69,9 @@ export function randomString(system = 36, length = 11) {
   const surplus = 11 - _length;
   return Math.random().toString(system).substr(2).slice(surplus);
 }
+
+export function firstCharUpCase(text) {
+  if (!text || typeof text !== 'string') return;
+
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
